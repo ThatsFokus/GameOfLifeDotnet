@@ -47,8 +47,8 @@ class Mygame
 		}else{
 			simulationTimer = 1;
 			if(mouse1Pressed){
-				int x = (int)((mousePosition.X / 10) - ((mousePosition.X / 10) % 1f));
-				int y = (int)((mousePosition.Y / 10) - ((mousePosition.Y / 10) % 1f));
+				int x = (int)((mousePosition.X / Cell.Size) - ((mousePosition.X / Cell.Size) % 1f));
+				int y = (int)((mousePosition.Y / Cell.Size) - ((mousePosition.Y / Cell.Size) % 1f));
 				circleOfLife.Field[x, y].Change();
 				if(!wereChanged.Contains(circleOfLife.Field[x,y])){
 					wereChanged.Add(circleOfLife.Field[x,y]);
@@ -115,8 +115,8 @@ class Mygame
 		var dead = new SKPaint(){Color = Cell.DeadColor};
 		for (int x = 0; x < circleOfLife.SizeX; x++){
 			for (int y = 0; y < circleOfLife.SizeY; y++){
-				canvas.DrawRect(x*10, y*10, 10, 10, background);
-				canvas.DrawRect(x * 10 + 1, y * 10 + 1, 8, 8, circleOfLife.Field[x,y].IsAlive ? alive : dead);
+				canvas.DrawRect(x * Cell.Size, y * Cell.Size, Cell.Size, Cell.Size, background);
+				canvas.DrawRect(x * Cell.Size + 1, y * Cell.Size + 1, Cell.Size - 2, Cell.Size - 2, circleOfLife.Field[x,y].IsAlive ? alive : dead);
 			}
 		}
 	}
@@ -174,7 +174,7 @@ class Mygame
 	private void createObjects(){
 		//create all variables
 		pressedKeys = new List<Key>();
-		circleOfLife = new CircleOfLife(SizeX / 10, SizeY / 10);
+		circleOfLife = new CircleOfLife(SizeX / Cell.Size, SizeY / Cell.Size);
 		mouse1Pressed = false;
 		wereChanged = new List<Cell>();
 		simulationSpeed = 1f;
