@@ -4,8 +4,8 @@ using Silk.NET.OpenGL;
 using Silk.NET.Input;
 class Mygame
 {
-	public static readonly int SizeX = 1280;
-	public static readonly int SizeY = 720;
+	private int SizeX;
+	private int SizeY;
 	private IWindow window;
 	private SKSurface surface;
 	private SKCanvas canvas;
@@ -25,6 +25,8 @@ class Mygame
 	public Mygame(int width, int height, string title){
 		var options = WindowOptions.Default;
 		this.title = title;
+		SizeX = width;
+		SizeY = height;
 		options.Title = title;
 		options.Size = new Silk.NET.Maths.Vector2D<int>(width, height);
 		options.ShouldSwapAutomatically = false;
