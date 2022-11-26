@@ -13,6 +13,10 @@ class Mygame
 
 	private SKPaint paint;
 	private List<Key> pressedKeys;
+	private bool mouse1Pressed;
+	private CircleOfLife circleOfLife;
+	private System.Numerics.Vector2 mousePosition;
+	private List<Cell> wereChanged;
 
 	public Mygame(int width, int height, string title){
 		var options = WindowOptions.Default;
@@ -28,10 +32,18 @@ class Mygame
 	}
 
 	private void OnUpdate(double arg1){
-		
+		if(mouse1Pressed){
+			int x = (int)((mousePosition.X / 10) - ((mousePosition.X / 10) % 1f));
+			int y = (int)((mousePosition.Y / 10) - ((mousePosition.Y / 10) % 1f));
+			circleOfLife.Field[x, y].Change();
+			if(!wereChanged.Contains(circleOfLife.Field[x,y])){
+				wereChanged.Add(circleOfLife.Field[x,y]);
+			}
+		}
 	}
 
 	private void OnRender(double arg1){
+		drawCells();
 		swapBuffers();
 	}
 
@@ -46,6 +58,7 @@ class Mygame
 
 		foreach (var mouse in input.Mice){
 			mouse.MouseDown += OnMouseDown;
+			mouse.MouseUp += OnMouseUp;
 			mouse.MouseMove += OnMouseMove;
 			mouse.Scroll += OnMouseScroll;
 		}
@@ -81,6 +94,18 @@ class Mygame
 		window.Run();
 	}
 
+	private void drawCells(){
+		var background = new SKPaint(){Color = SKColors.DimGray};
+		var alive = new SKPaint(){Color = Cell.AliveColor};
+		var dead = new SKPaint(){Color = Cell.DeadColor};
+		for (int x = 0; x < circleOfLife.SizeX; x++){
+			for (int y = 0; y < circleOfLife.SizeY; y++){
+				canvas.DrawRect(x*10, y*10, 10, 10, background);
+				canvas.DrawRect(x * 10 + 1, y * 10 + 1, 8, 8, circleOfLife.Field[x,y].IsAlive ? alive : dead);
+			}
+		}
+	}
+
 	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3){
 		if (arg2 == Key.Escape) window.Close();
 		if (!pressedKeys.Contains(arg2)) pressedKeys.Add(arg2);
@@ -91,11 +116,29 @@ class Mygame
 	}
 
 	private void OnMouseMove(IMouse arg1, System.Numerics.Vector2 arg2){
-
+		mousePosition = arg1.Position;
 	}
 
 	private void OnMouseDown(IMouse arg1, MouseButton arg2){
+		if(MouseButton.Left == arg2) mouse1Pressed = true;
+	}
 
+	private void OnMouseUp(IMouse arg1, MouseButton arg2){
+		if(MouseButton.Left == arg2){
+			mouse1Pressed = false;
+			setAllChangedFalse();
+		}
+	}
+
+	private void setAllChangedFalse(){
+		/*for (int x = 0; x < circleOfLife.SizeX; x++){
+			for (int y = 0; y < circleOfLife.SizeY; y++){
+				circleOfLife.Field[x, y].Reset();
+			}
+		}*/
+
+		wereChanged.ForEach(delegate(Cell cell) {cell.Reset(); });
+		wereChanged.Clear();
 	}
 
 	private void OnMouseScroll(IMouse arg1, ScrollWheel arg2){
@@ -113,6 +156,9 @@ class Mygame
 	private void createObjects(){
 		//create all variables
 		pressedKeys = new List<Key>();
+		circleOfLife = new CircleOfLife(SizeX / 10, SizeY / 10);
+		mouse1Pressed = false;
+		wereChanged = new List<Cell>();
 	}
 
 	void onClosing(){
