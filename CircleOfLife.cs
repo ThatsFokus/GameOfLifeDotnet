@@ -30,6 +30,7 @@ public class CircleOfLife{
 		}
 
 		toChange.ForEach(delegate(Cell cell) {cell.Change(); });
+		toChange.ForEach(delegate(Cell cell) {cell.Reset(); });
 	}
 
 	private int amountOfLivingNeighbors(int x, int y){
