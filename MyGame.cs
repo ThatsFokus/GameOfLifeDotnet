@@ -17,6 +17,9 @@ class Mygame
 	private CircleOfLife circleOfLife;
 	private System.Numerics.Vector2 mousePosition;
 	private List<Cell> wereChanged;
+	private float simulationSpeed;
+	private bool simulationRunning;
+	private float simulationTimer;
 
 	public Mygame(int width, int height, string title){
 		var options = WindowOptions.Default;
@@ -32,12 +35,18 @@ class Mygame
 	}
 
 	private void OnUpdate(double arg1){
-		if(mouse1Pressed){
-			int x = (int)((mousePosition.X / 10) - ((mousePosition.X / 10) % 1f));
-			int y = (int)((mousePosition.Y / 10) - ((mousePosition.Y / 10) % 1f));
-			circleOfLife.Field[x, y].Change();
-			if(!wereChanged.Contains(circleOfLife.Field[x,y])){
-				wereChanged.Add(circleOfLife.Field[x,y]);
+		if(simulationRunning){
+			if(simulationTimer < 0){
+				circleOfLife.SimulateLive();
+			}
+		}else{
+			if(mouse1Pressed){
+				int x = (int)((mousePosition.X / 10) - ((mousePosition.X / 10) % 1f));
+				int y = (int)((mousePosition.Y / 10) - ((mousePosition.Y / 10) % 1f));
+				circleOfLife.Field[x, y].Change();
+				if(!wereChanged.Contains(circleOfLife.Field[x,y])){
+					wereChanged.Add(circleOfLife.Field[x,y]);
+				}
 			}
 		}
 	}
@@ -142,7 +151,11 @@ class Mygame
 	}
 
 	private void OnMouseScroll(IMouse arg1, ScrollWheel arg2){
-
+		if (arg2.Y < 0){
+			simulationSpeed -= 0.05f;
+		}else if(arg2.Y > 0){
+			simulationSpeed += 0.05f;
+		}
 	}
 	
 
@@ -159,6 +172,8 @@ class Mygame
 		circleOfLife = new CircleOfLife(SizeX / 10, SizeY / 10);
 		mouse1Pressed = false;
 		wereChanged = new List<Cell>();
+		simulationSpeed = 1f;
+		simulationRunning = false;
 	}
 
 	void onClosing(){

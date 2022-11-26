@@ -17,4 +17,8 @@ public class CircleOfLife{
 			}
 		}
 	}
+
+	public void SimulateLive(){
+		
+	}
 }
