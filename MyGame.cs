@@ -20,9 +20,11 @@ class Mygame
 	private float simulationSpeed;
 	private bool simulationRunning;
 	private float simulationTimer;
+	private string title;
 
 	public Mygame(int width, int height, string title){
 		var options = WindowOptions.Default;
+		this.title = title;
 		options.Title = title;
 		options.Size = new Silk.NET.Maths.Vector2D<int>(width, height);
 		options.ShouldSwapAutomatically = false;
@@ -35,11 +37,15 @@ class Mygame
 	}
 
 	private void OnUpdate(double arg1){
+		window.Title = title + "	Simulation Speed:" + (simulationSpeed * 100).ToString("0.00") + "%";
 		if(simulationRunning){
 			if(simulationTimer < 0){
 				circleOfLife.SimulateLive();
+				simulationTimer += 1;
 			}
+			simulationTimer -= (float)arg1 * simulationSpeed;
 		}else{
+			simulationTimer = 1;
 			if(mouse1Pressed){
 				int x = (int)((mousePosition.X / 10) - ((mousePosition.X / 10) % 1f));
 				int y = (int)((mousePosition.Y / 10) - ((mousePosition.Y / 10) % 1f));
@@ -117,11 +123,10 @@ class Mygame
 
 	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3){
 		if (arg2 == Key.Escape) window.Close();
-		if (!pressedKeys.Contains(arg2)) pressedKeys.Add(arg2);
+		if(arg2 == Key.Space) simulationRunning = !simulationRunning;
 	}
 
 	private void OnKeyUp(IKeyboard arg1, Key arg2, int arg3){
-		pressedKeys.Remove(arg2);
 	}
 
 	private void OnMouseMove(IMouse arg1, System.Numerics.Vector2 arg2){

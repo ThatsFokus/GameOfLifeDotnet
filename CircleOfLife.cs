@@ -19,6 +19,30 @@ public class CircleOfLife{
 	}
 
 	public void SimulateLive(){
-		
+		List<Cell> toChange = new List<Cell>();
+		for (int x = 0; x < SizeX; x++){
+			for (int y = 0; y < SizeY; y++){
+				int livingNeighbors = amountOfLivingNeighbors(x,y);
+				if(!field[x,y].IsAlive && livingNeighbors == 3) toChange.Add(field[x, y]);
+				if(field[x,y].IsAlive && livingNeighbors < 2) toChange.Add(field[x, y]);
+				if(field[x,y].IsAlive && livingNeighbors > 3) toChange.Add(field[x, y]);
+			}
+		}
+
+		toChange.ForEach(delegate(Cell cell) {cell.Change(); });
+	}
+
+	private int amountOfLivingNeighbors(int x, int y){
+		int amount = 0;
+		for(int i = -1; i < 2; i++){
+			if (x + i < 0) continue;
+			if (x + i >= SizeX) continue;
+			for(int j = -1; j < 2; j++){
+				if(y + j < 0) continue;
+				if(y + j >= SizeY) continue;
+				if(field[x + i, y + j].IsAlive) amount += 1;
+			}
+		}
+		return amount;
 	}
 }
