@@ -2,7 +2,7 @@ using SkiaSharp;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.Input;
-class Mygame
+class MyGame
 {
 	private int SizeX;
 	private int SizeY;
