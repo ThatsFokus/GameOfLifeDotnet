@@ -39,6 +39,7 @@ public class CircleOfLife{
 			if (x + i < 0) continue;
 			if (x + i >= SizeX) continue;
 			for(int j = -1; j < 2; j++){
+				if(i == 0 && j == 0) continue;
 				if(y + j < 0) continue;
 				if(y + j >= SizeY) continue;
 				if(field[x + i, y + j].IsAlive) amount += 1;
