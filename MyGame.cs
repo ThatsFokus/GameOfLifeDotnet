@@ -2,6 +2,7 @@ using SkiaSharp;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.Input;
+using System.Collections.Generic;
 class MyGame
 {
 	private int SizeX;
@@ -22,7 +23,7 @@ class MyGame
 	private float simulationTimer;
 	private string title;
 
-	public Mygame(int width, int height, string title){
+	public MyGame(int width, int height, string title){
 		var options = WindowOptions.Default;
 		this.title = title;
 		SizeX = width;
@@ -125,6 +126,7 @@ class MyGame
 
 	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3){
 		if (arg2 == Key.Escape) window.Close();
+		if(arg2 == Key.Backspace) circleOfLife.killAllLive();
 		if(arg2 == Key.Space) simulationRunning = !simulationRunning;
 	}
 

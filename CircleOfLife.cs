@@ -13,11 +13,18 @@ public class CircleOfLife{
 		field  = new Cell[width, height];
 		for (int w = 0; w < width; w++){
 			for (int h = 0; h < height; h++){
-				field[w,h] = new Cell(w * Cell.Size, h * Cell.Size);
+				field[w,h] = new Cell();
 			}
 		}
 	}
 
+	public void killAllLive(){
+		for (int w = 0; w < SizeX; w++){
+			for (int h = 0; h < SizeY; h++){
+				field[w,h] = new Cell();
+			}
+		}
+	}
 	public void SimulateLive(){
 		List<Cell> toChange = new List<Cell>();
 		for (int x = 0; x < SizeX; x++){

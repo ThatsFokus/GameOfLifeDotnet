@@ -18,7 +18,7 @@ public class Cell{
 		get{return isAlive;}
 	}
 
-	public Cell(int x, int y){
+	public Cell(){
 		isAlive = false;
 	}
 
