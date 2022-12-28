@@ -23,7 +23,8 @@ class MyGame
 	private float simulationTimer;
 	private string title;
 
-	public MyGame(int width, int height, string title){
+	public MyGame(int width, int height, string title)
+	{
 		var options = WindowOptions.Default;
 		this.title = title;
 		SizeX = width;
@@ -39,42 +40,62 @@ class MyGame
 		window.Closing += onClosing;
 	}
 
-	private void OnUpdate(double arg1){
+	private void OnUpdate(double arg1)
+	{
 		window.Title = title + "	Simulation Speed:" + (simulationSpeed * 100).ToString("0.00") + "%";
-		if(simulationRunning){
-			if(simulationTimer < 0){
+		if (simulationRunning)
+		{
+			if (simulationTimer < 0)
+			{
 				circleOfLife.SimulateLive();
 				simulationTimer += 1;
 			}
 			simulationTimer -= (float)arg1 * simulationSpeed;
-		}else{
+		}
+		else
+		{
 			simulationTimer = 1;
-			if(mouse1Pressed){
+			if (mouse1Pressed)
+			{
 				int x = (int)((mousePosition.X / Cell.Size) - ((mousePosition.X / Cell.Size) % 1f));
 				int y = (int)((mousePosition.Y / Cell.Size) - ((mousePosition.Y / Cell.Size) % 1f));
 				circleOfLife.Field[x, y].Change();
-				if(!wereChanged.Contains(circleOfLife.Field[x,y])){
-					wereChanged.Add(circleOfLife.Field[x,y]);
+				if (!wereChanged.Contains(circleOfLife.Field[x, y]))
+				{
+					wereChanged.Add(circleOfLife.Field[x, y]);
 				}
 			}
 		}
 	}
 
-	private void OnRender(double arg1){
+	private void onFileDrop(string[] arg1)
+	{
+		if (arg1.Count() == 0) return;
+
+		circleOfLife.LoadFromFile(arg1[0]);
+	}
+
+	private void OnRender(double arg1)
+	{
 		drawCells();
 		swapBuffers();
 	}
 
-	private void OnLoad(){
+	private void OnLoad()
+	{
 		//create and bind input context
 		var input = window.CreateInput();
 
-		foreach (var keyboard in input.Keyboards){
+		window.FileDrop += onFileDrop;
+
+		foreach (var keyboard in input.Keyboards)
+		{
 			keyboard.KeyDown += OnKeyDown;
 			keyboard.KeyUp += OnKeyUp;
 		}
 
-		foreach (var mouse in input.Mice){
+		foreach (var mouse in input.Mice)
+		{
 			mouse.MouseDown += OnMouseDown;
 			mouse.MouseUp += OnMouseUp;
 			mouse.MouseMove += OnMouseMove;
@@ -86,7 +107,8 @@ class MyGame
 		gl.ClearColor(1f, 1f, 1f, 1f);
 
 		//create SkiaSharp context
-		var grinterface = GRGlInterface.CreateOpenGl(name => {
+		var grinterface = GRGlInterface.CreateOpenGl(name =>
+		{
 			if (window.GLContext.TryGetProcAddress(name, out nint fn)) return fn;
 			return (nint)0;
 		});
@@ -108,74 +130,96 @@ class MyGame
 		createObjects();
 	}
 
-	public void Run(){
+	public void Run()
+	{
 		window.Run();
 	}
 
-	private void drawCells(){
-		var background = new SKPaint(){Color = SKColors.DimGray};
-		var alive = new SKPaint(){Color = Cell.AliveColor};
-		var dead = new SKPaint(){Color = Cell.DeadColor};
-		for (int x = 0; x < circleOfLife.SizeX; x++){
-			for (int y = 0; y < circleOfLife.SizeY; y++){
+	private void drawCells()
+	{
+		var background = new SKPaint() { Color = SKColors.DimGray };
+		var alive = new SKPaint() { Color = Cell.AliveColor };
+		var dead = new SKPaint() { Color = Cell.DeadColor };
+		for (int x = 0; x < circleOfLife.SizeX; x++)
+		{
+			for (int y = 0; y < circleOfLife.SizeY; y++)
+			{
 				canvas.DrawRect(x * Cell.Size, y * Cell.Size, Cell.Size, Cell.Size, background);
-				canvas.DrawRect(x * Cell.Size + 1, y * Cell.Size + 1, Cell.Size - 2, Cell.Size - 2, circleOfLife.Field[x,y].IsAlive ? alive : dead);
+				canvas.DrawRect(x * Cell.Size + 1, y * Cell.Size + 1, Cell.Size - 2, Cell.Size - 2, circleOfLife.Field[x, y].IsAlive ? alive : dead);
 			}
 		}
 	}
 
-	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3){
+	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3)
+	{
 		if (arg2 == Key.Escape) window.Close();
-		if(arg2 == Key.Backspace) circleOfLife.killAllLive();
-		if(arg2 == Key.Space) simulationRunning = !simulationRunning;
+		if (arg2 == Key.Backspace) circleOfLife.killAllLive();
+		if (arg2 == Key.Space) simulationRunning = !simulationRunning;
+		if (arg1.IsKeyPressed(Key.ControlLeft) && arg2 == Key.S)
+		{
+			circleOfLife.SaveToFile();
+		}
 	}
 
-	private void OnKeyUp(IKeyboard arg1, Key arg2, int arg3){
+	private void OnKeyUp(IKeyboard arg1, Key arg2, int arg3)
+	{
+
 	}
 
-	private void OnMouseMove(IMouse arg1, System.Numerics.Vector2 arg2){
+	private void OnMouseMove(IMouse arg1, System.Numerics.Vector2 arg2)
+	{
 		mousePosition = arg1.Position;
 	}
 
-	private void OnMouseDown(IMouse arg1, MouseButton arg2){
-		if(MouseButton.Left == arg2) mouse1Pressed = true;
+	private void OnMouseDown(IMouse arg1, MouseButton arg2)
+	{
+		if (MouseButton.Left == arg2) mouse1Pressed = true;
 	}
 
-	private void OnMouseUp(IMouse arg1, MouseButton arg2){
-		if(MouseButton.Left == arg2){
+	private void OnMouseUp(IMouse arg1, MouseButton arg2)
+	{
+		if (MouseButton.Left == arg2)
+		{
 			mouse1Pressed = false;
 			setAllChangedFalse();
 		}
 	}
 
-	private void setAllChangedFalse(){
+	private void setAllChangedFalse()
+	{
 		/*for (int x = 0; x < circleOfLife.SizeX; x++){
 			for (int y = 0; y < circleOfLife.SizeY; y++){
 				circleOfLife.Field[x, y].Reset();
 			}
 		}*/
 
-		wereChanged.ForEach(delegate(Cell cell) {cell.Reset(); });
+		wereChanged.ForEach(delegate (Cell cell) { cell.Reset(); });
 		wereChanged.Clear();
 	}
 
-	private void OnMouseScroll(IMouse arg1, ScrollWheel arg2){
-		if (arg2.Y < 0){
+	private void OnMouseScroll(IMouse arg1, ScrollWheel arg2)
+	{
+		if (arg2.Y < 0)
+		{
 			simulationSpeed -= 0.05f;
-		}else if(arg2.Y > 0){
+		}
+		else if (arg2.Y > 0)
+		{
 			simulationSpeed += 0.05f;
 		}
 	}
-	
 
 
-	private void swapBuffers(){
+
+	private void swapBuffers()
+	{
 		canvas.Flush();
 		window.SwapBuffers();
 		canvas.Clear(SKColors.DarkSlateGray); // set the background color here
 	}
 
-	private void createObjects(){
+	private void createObjects()
+	{
 		//create all variables
 		pressedKeys = new List<Key>();
 		circleOfLife = new CircleOfLife(SizeX / Cell.Size, SizeY / Cell.Size);
@@ -185,6 +229,7 @@ class MyGame
 		simulationRunning = false;
 	}
 
-	void onClosing(){
+	void onClosing()
+	{
 	}
 }
