@@ -42,7 +42,8 @@ class MyGame
 
 	private void OnUpdate(double arg1)
 	{
-		window.Title = title + "	Simulation Speed:" + (simulationSpeed * 100).ToString("0.00") + "%";
+		window.Title = title + "   Simulation Speed:" + (simulationSpeed * 100).ToString("0.00") + "%";
+		window.Title += simulationRunning ? "    RUNNING" : "    PAUSED";
 		if (simulationRunning)
 		{
 			if (simulationTimer < 0)
@@ -152,9 +153,11 @@ class MyGame
 
 	private void OnKeyDown(IKeyboard arg1, Key arg2, int arg3)
 	{
-		if (arg2 == Key.Escape) window.Close();
-		if (arg2 == Key.Backspace) circleOfLife.killAllLive();
 		if (arg2 == Key.Space) simulationRunning = !simulationRunning;
+		if (arg2 == Key.Escape) window.Close();
+		if (simulationRunning) return;
+
+		if (arg2 == Key.Backspace) circleOfLife.killAllLive();
 		if (arg2 == Key.R) circleOfLife.generateRandom(25);
 		if (arg1.IsKeyPressed(Key.ControlLeft) && arg2 == Key.S)
 		{
