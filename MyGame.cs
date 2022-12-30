@@ -155,6 +155,7 @@ class MyGame
 		if (arg2 == Key.Escape) window.Close();
 		if (arg2 == Key.Backspace) circleOfLife.killAllLive();
 		if (arg2 == Key.Space) simulationRunning = !simulationRunning;
+		if (arg2 == Key.R) circleOfLife.generateRandom(25);
 		if (arg1.IsKeyPressed(Key.ControlLeft) && arg2 == Key.S)
 		{
 			circleOfLife.SaveToFile();

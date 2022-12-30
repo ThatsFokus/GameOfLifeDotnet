@@ -25,11 +25,25 @@ public class CircleOfLife
 		}
 	}
 
+
+	public void generateRandom(double chanceForLifeInPercent)
+	{
+		chanceForLifeInPercent /= 100;
+		Random random = new Random((int)(DateTime.UtcNow.Ticks % int.MaxValue));
+		field = new Cell[SizeX, SizeY];
+		for (int w = 0; w < SizeX; w++)
+		{
+			for (int h = 0; h < SizeY; h++)
+			{
+				field[w, h] = random.NextDouble() <= chanceForLifeInPercent ? new Cell(true) : new Cell();
+			}
+		}
+	}
+
 	public void LoadFromFile(string path)
 	{
 		string[] read = System.IO.File.ReadAllLines(path);
 		stringTofield(read);
-
 	}
 
 	private string[] fieldToString()
