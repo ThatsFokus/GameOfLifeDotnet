@@ -2,7 +2,6 @@ using SkiaSharp;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.Input;
-using System.Collections.Generic;
 class MyGame
 {
 	private int SizeX;
@@ -159,6 +158,7 @@ class MyGame
 
 		if (arg2 == Key.Backspace) circleOfLife.killAllLive();
 		if (arg2 == Key.R) circleOfLife.generateRandom(25);
+		if (arg2 == Key.Right) circleOfLife.SimulateLive();
 		if (arg1.IsKeyPressed(Key.ControlLeft) && arg2 == Key.S)
 		{
 			circleOfLife.SaveToFile();
@@ -212,8 +212,6 @@ class MyGame
 			simulationSpeed += 0.05f;
 		}
 	}
-
-
 
 	private void swapBuffers()
 	{
